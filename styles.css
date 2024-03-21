@@ -1,0 +1,19 @@
+body {
+    background-color: #36395a; /* Martinique*/
+    min-height: 80vh;
+    font-size: 1 rem;
+    color: #B0F0B5; /* Madang */
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    color: #B0F0B5 !important;
+    font-family: monospace;
+    font-size: 25px;
+    text-align: left;
+}
+
+btn btn-dark {
+    background-color: #36395a; /* Martinique*/
+    color: #B0F0B5; /* Madang */
+}
