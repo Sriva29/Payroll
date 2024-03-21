@@ -9,136 +9,194 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles.css">
     <title>React ⚛️ Payroll Admin Dashboard</title>
-
 </head>
-<body >
 
-<div id="rooster"></div>
-<div id="payroll"></div>
-<div id="raise-form"></div>
-<div id="hire-form"></div>
+<body>
 
-<script src="person.js" type="text/babel"></script>
-<script type="text/babel">
-    // import * as Person from './person.js';
-    // let employees = new Person (id: 1, firstName: "Jean-Luc", lastName: "Picard", dob: "2305-07-13", hoursWorked: 100, hourlyPay: 45);
-    let employees = [new Manager (1,"Jean-Luc", "Picard", "2305-07-13", 100, 45), 
-                    new Employee (2,"Will", "Riker", "2021-03-05", 20, 10), 
-                    new Employee (3,"Beverly", "Crusher", "2324-10-13", 18, 60), 
-                    new Employee (4,"Data", "", "2338-02-02", 25, 1000), 
-                    new Employee (5,"Geordi", "LaForge", "2335-02-16", 22, 60), 
-                    new Employee (6,"Worf", "", "2340-07-09", 23, 160), 
-                    new Employee (7,"Wesley", "Crusher", "2348-07-29", 10, 16), 
-                    new Employee (8,"Deanna", "Troi", "2336-03-29", 15, 46), 
-                    new Employee (9,"Tasha", "Yar", "2337-03-23", 16, 16)];
-    function Header(props) {
-        console.log(props);
-        return (
+    <div id="rooster"></div>
+    <div id="payroll"></div>
+    <div id="raise-form"></div>
+    <div id="hire-form"></div>
+
+    <script src="person.js" type="text/babel"></script>
+
+    <script type="text/babel">
+
+        const Header = ({ name }) => (
             <header>
-                <h1>{props.name}'s Payroll Admin Dashboard</h1>
+                <h1>{name}'s Payroll Admin Dashboard</h1>
             </header>
         );
-    }
 
-    const totalPay = employees.reduce((total, employee) => total + (employee.hrsWorked * employee.hourlyWage), 0);
-    function Main(props) {
-        // list of employees
-        return (
-            <main>
-                <img src="https://images.pexels.com/photos/1703314/pexels-photo-1703314.jpeg?auto=compress&cs=tinysrgb&w=400"
-                height="200" 
-                width={window.innerWidth/3}
-                alt="Image of a campfire in the desert at night. Representing Kalvi under the stars as a concept."
-                ></img>
-                <p>{props.number} Employees in Payroll</p>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Date of Birth</th>
-                            <th>Hours Worked</th>
-                            <th>Hourly Pay</th>
-                            <th>Total Pay</th>
-                            <th>Give Raise (enter %)</th>
-                            <th>Fire</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {employees.map((employee) => (
-                            // key is an id that keeps everything in sync. Without it, if you add to the top or middle, it could put things out of sync
-                            // basically, if every row has a key, react can keep track of what's changed and what hasn't. And doesn't need to re-render everything, which is an inefficient way to do things
-                            <tr key={employee.id}> 
-                                <td>{employee.id}</td>
-                                <td>{employee.fName}</td>
-                                <td>{employee.lName}</td>
-                                <td>{employee.dob}</td>
-                                <td>{employee.hrsWorked}</td>
-                                <td>{employee.hourlyWage}</td>
-                                <td>{employee.hrsWorked * employee.hourlyWage}</td>
-                                <td><input type="text"></input> <button class="btn btn-dark">Ok</button></td>
-                                <td><button class="btn btn-danger">Fire</button></td>
-                            </tr>
-                        ))}
-                        <tr>
-                            <td colSpan="6">Total</td>
-                            <td>{totalPay}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </main>);
-    }
-
-    function Footer(props) {
-        return (
+        const Footer = ({ year }) => (
             <footer>
-                <p>🏫© {props.year} Payroll Admin Dashboard by Srivatsan R  🚀</p>
+                <p>🏫© {year} Payroll Admin Dashboard by Srivatsan R 🚀</p>
             </footer>
         );
-    }
 
-    function HireForm() {
-        return (
-            <div>
-                <h2>Hire Employees</h2>
-                <form>
-                    <label for="firstName">First Name:</label>
-                    <input type="text" id="firstName" name="firstName" required></input>
+        function HireForm({ onHireEmployee }) {
+            const handleSubmit = (event) => {
+                event.preventDefault();
+                const formData = new FormData(event.target);
+                const employeeData = {
+                    // id: Date.now(),
+                    fName: formData.get('firstName'),
+                    lName: formData.get('lastName'),
+                    dob: formData.get('dob'),
+                    hourlyWage: parseFloat(formData.get('hourlyPay')),
+                    hrsWorked: parseInt(formData.get('hoursWorked'), 10),
+                };
+                onHireEmployee(employeeData);
+                event.target.reset();
+            };
 
-                    <label for="lastName">Last Name:</label>
-                    <input type="text" id="lastName" name="lastName" required></input>
+            return (
+                <div>
+                    <h2>Hire Employees</h2>
+                    <form onSubmit={handleSubmit}>
+                        <label htmlFor="firstName">First Name:</label>
+                        <input type="text" id="firstName" name="firstName" required />
+                        <label htmlFor="lastName">Last Name:</label>
+                        <input type="text" id="lastName" name="lastName" required />
+                        <label htmlFor="dob">Date of Birth:</label>
+                        <input type="date" id="dob" name="dob" required />
+                        <label htmlFor="hoursWorked">Hours Worked:</label>
+                        <input type="number" id="hoursWorked" name="hoursWorked" required />
+                        <label htmlFor="hourlyPay">Hourly Pay:</label>
+                        <input type="number" id="hourlyPay" name="hourlyPay" required />
+                        <button type="submit" className="btn btn-dark">Hire Employee</button>
+                    </form>
+                </div>
+            );
+        }
 
-                    <label for="dob">Date of Birth:</label>
-                    <input type="date" id="dob" name="dob" required></input>
+        function Main({ employees, onFireEmployee, onGiveRaise }) {
+            const totalPay = employees.reduce((total, {hrsWorked = 0, hourlyWage = 0}) => total + (hrsWorked * hourlyWage), 0);
 
-                    <label for="hoursWorked">Hours Worked:</label>
-                    <input type="number" id="hoursWorked" name="hoursWorked" required></input>
+            const handleRaise = (employeeId, raisePercentage) => {
+                const raiseInput = document.getElementById(`raise-${employeeId}`);
+                raisePercentage = parseFloat(raiseInput.value);
+                if (!isNaN(raisePercentage) && raisePercentage > 0) {
+                    onGiveRaise(employeeId, raisePercentage);
+                    raiseInput.value = ''; // Clear the input field
+                } else {
+                    console.error("Invalid raise percentage");
+                }
+            };
 
-                    <label for="hourlyPay">Hourly Pay:</label>
-                    <input type="number" id="hourlyPay" name="hourlyPay" required></input>
 
-                    <button class="btn btn-dark" type="submit">Hire Employee</button>
-                </form>
-            </div>
-        );
-    }
+            return (
+                <main>
+                    <p>{employees.length} Employees in Payroll</p>
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Date of Birth</th>
+                                <th>Hours Worked</th>
+                                <th>Hourly Pay</th>
+                                <th>Total Pay</th>
+                                <th>Give Raise (enter %)</th>
+                                <th>Fire</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {employees.map((employee, index) => (
+                                <tr key={employee.id}>
+                                    <td>{employee.id}</td>
+                                    <td>{employee.fName}</td>
+                                    <td>{employee.lName}</td>
+                                    <td>{employee.dob}</td>
+                                    <td>{employee.hrsWorked ?? 'N/A'}</td>
+                                    <td>{(employee.hourlyWage ?? 0).toFixed(2)}</td>
+                                    <td>{((employee.hrsWorked ?? 0) * (employee.hourlyWage ?? 0)).toFixed(2)}</td>
+                                    <td>
+                                        <input type="number" id={`raise-${employee.id}`} />
+                                        <button className="btn btn-dark" onClick={() => {
+                                            const raiseInput = document.getElementById(`raise-${employee.id}`);
+                                            handleRaise(employee.id, parseFloat(raiseInput.value));
+                                        }}>Ok</button>
+                                    </td>
+                                    <td><button className="btn btn-danger" onClick={() => onFireEmployee(employee.id)}>Fire</button></td>
+                                </tr>
+                            ))}
+                            <tr>
+                                <td colSpan="6">Total</td>
+                                <td>{totalPay.toFixed(2)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </main>
+            );
+        }
 
-    function App() {
-        return (
-            // use react fragment if you don't necessarily need a DOM. There is apparently a shorter syntax for this (to be covered later in the course)
-            <React.Fragment>
-                <Header name="Kalvi Inc." />
-                <Main number={employees.length}/>
-                <HireForm />
-                <Footer year={new Date().getFullYear()} />
-            </React.Fragment>
-        );
-    }
+        function App() {
 
-    ReactDOM.render(<App />, document.getElementById('rooster'));
+            const [employees, setEmployees] = React.useState([
+                new Manager(1, "Jean-Luc", "Picard", "2305-07-13", 100, 45),
+                new Employee(2, "Will", "Riker", "2021-03-05", 20, 10),
+                new Employee(3, "Beverly", "Crusher", "2324-10-13", 18, 60),
+                new Employee(4, "Data", "", "2338-02-02", 25, 1000),
+                new Employee(5, "Geordi", "LaForge", "2335-02-16", 22, 60),
+                new Employee(6, "Worf", "", "2340-07-09", 23, 160),
+                new Employee(7, "Wesley", "Crusher", "2348-07-29", 10, 16),
+                new Employee(8, "Deanna", "Troi", "2336-03-29", 15, 46),
+                new Employee(9, "Tasha", "Yar", "2337-03-23", 16, 16)
+            ]);
 
-</script>
+            const initialMaxId = employees.reduce((max, emp) => Math.max(max, emp.id), 0);
+            const [nextId, setNextId] = React.useState(initialMaxId + 1);
+
+            const addEmployee = (employeeData) => {
+                const newEmployee = new Employee(
+                    nextId,
+                    employeeData.fName,
+                    employeeData.lName,
+                    employeeData.dob,
+                    employeeData.hourlyWage,
+                    employeeData.hrsWorked
+                );
+                setEmployees(currentEmployees => [...currentEmployees, newEmployee]);
+                setNextId(nextId + 1);
+            };
+
+            const fireEmployee = (employeeId) => {
+                setEmployees(employees.filter(employee => employee.id !== employeeId));
+
+            };
+
+            const giveRaise = (employeeId, raisePercentage) => {
+                const updatedEmployees = employees.map(employee => {
+                    if (employee.id === employeeId) {
+                        const raiseFactor = 1 + (raisePercentage / 100);
+                        return { ...employee, hourlyWage: employee.hourlyWage * raiseFactor };
+                    }
+                    return employee;
+                });
+                setEmployees(updatedEmployees);
+            };
+
+
+
+            // const totalPay = employees.reduce((total, employee) => total + (employee.hrsWorked * employee.hourlyWage), 0);
+
+            return (
+                // use react fragment if you don't necessarily need a DOM. There is apparently a shorter syntax for this (to be covered later in the course)
+                <React.Fragment>
+                    <Header name="Kalvi Inc." />
+                    <Main employees={employees} onFireEmployee={fireEmployee} onGiveRaise={giveRaise} />
+                    <HireForm onHireEmployee={addEmployee} />
+                    <Footer year={new Date().getFullYear()} />
+                </React.Fragment>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('rooster'));
+
+    </script>
 
 </body>
+
 </html>

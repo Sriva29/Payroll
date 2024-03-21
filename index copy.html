@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js" crossorigin></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <title>React ⚛️ Payroll Admin Dashboard</title>
+</head>
+<body >
+
+<div id="rooster"></div>
+<div id="payroll"></div>
+<div id="raise-form"></div>
+<div id="hire-form"></div>
+
+<script src="person.js" type="text/babel"></script>
+
+<script type="text/babel">
+
+    const Header = ({name}) => (
+        <header>
+            <h1>{name}'s Payroll Admin Dashboard</h1>
+        </header>
+    );
+
+    const Footer = ({ year }) => (
+        <footer>
+            <p>🏫© {year} Payroll Admin Dashboard by Srivatsan R 🚀</p>
+        </footer>
+    );
+
+    const HireForm = ({ onHireEmployee }) => {
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const employeeData = {
+            id: Date.now(), // Simplified example, should ideally be unique
+            fName: formData.get('firstName'),
+            lName: formData.get('lastName'),
+            dob: formData.get('dob'), // Assuming your Employee constructor accepts this format
+            hourlyWage: parseFloat(formData.get('hourlyPay')),
+            hrsWorked: parseInt(formData.get('hoursWorked'), 10),
+        };
+        onHireEmployee(employeeData);
+        event.target.reset();
+    };
+
+        return (
+            <div>
+                <h2>Hire Employees</h2>
+                <form onSubmit={handleSubmit}>
+                    <label htmlFor="firstName">First Name:</label>
+                    <input type="text" id="firstName" name="firstName" required />
+                    {/* Additional fields */}
+                    <button type="submit" className="btn btn-dark">Hire Employee</button>
+                </form>
+            </div>
+        );
+    };
+
+    const Main = ({ employees }) => {
+        const totalPay = employees.reduce((total, employee) => total + (employee.hrsWorked * employee.hourlyWage), 0);
+
+        return (
+            <main>
+            <p>{employees.length} Employees in Payroll</p>
+            <img src="https://images.pexels.com/photos/1703314/pexels-photo-1703314.jpeg?auto=compress&cs=tinysrgb&w=400"
+            height="200" 
+            width={window.innerWidth/3}
+            alt="Image of a campfire in the desert at night. Representing Kalvi under the stars as a concept."
+            ></img>
+            <p>{props.number} Employees in Payroll</p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Date of Birth</th>
+                        <th>Hours Worked</th>
+                        <th>Hourly Pay</th>
+                        <th>Total Pay</th>
+                        <th>Give Raise (enter %)</th>
+                        <th>Fire</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {employees.map((employee) => (
+                        // key is an id that keeps everything in sync. Without it, if you add to the top or middle, it could put things out of sync
+                        // basically, if every row has a key, react can keep track of what's changed and what hasn't. And doesn't need to re-render everything, which is an inefficient way to do things
+                        <tr key={employee.id}> 
+                            <td>{employee.id}</td>
+                            <td>{employee.fName}</td>
+                            <td>{employee.lName}</td>
+                            <td>{employee.dob}</td>
+                            <td>{employee.hrsWorked}</td>
+                            <td>{employee.hourlyWage}</td>
+                            <td>{employee.hrsWorked * employee.hourlyWage}</td>
+                            <td><input type="text"></input> <button class="btn btn-dark">Ok</button></td>
+                            <td><button class="btn btn-danger">Fire</button></td>
+                        </tr>
+                    ))}
+                    <tr>
+                        <td colSpan="6">Total</td>
+                        <td>{totalPay}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+        )
+    };
+
+    function App() {
+
+    const [employees, setEmployees] = React.useState([
+            new Manager (1,"Jean-Luc", "Picard", "2305-07-13", 100, 45), 
+            new Employee (2,"Will", "Riker", "2021-03-05", 20, 10), 
+            new Employee (3,"Beverly", "Crusher", "2324-10-13", 18, 60), 
+            new Employee (4,"Data", "", "2338-02-02", 25, 1000), 
+            new Employee (5,"Geordi", "LaForge", "2335-02-16", 22, 60), 
+            new Employee (6,"Worf", "", "2340-07-09", 23, 160), 
+            new Employee (7,"Wesley", "Crusher", "2348-07-29", 10, 16), 
+            new Employee (8,"Deanna", "Troi", "2336-03-29", 15, 46), 
+            new Employee (9,"Tasha", "Yar", "2337-03-23", 16, 16)
+    ]);
+
+    const addEmployee = (employeeData) => {
+        setEmployees(currentEmployees => [...currentEmployees, new Employee(employeeData)]);
+    };
+
+    // const totalPay = employees.reduce((total, employee) => total + (employee.hrsWorked * employee.hourlyWage), 0);
+
+    return (
+        // use react fragment if you don't necessarily need a DOM. There is apparently a shorter syntax for this (to be covered later in the course)
+            <React.Fragment>
+                <Header name="Kalvi Inc." />
+                <Main employees={employees}/>
+                <HireForm onHireEmployee={addEmployee}/>
+                <Footer year={new Date().getFullYear()} />
+            </React.Fragment>
+        );
+    }
+
+ReactDOM.render(<App />, document.getElementById('rooster'));
+
+</script>
+
+</body>
+</html>
