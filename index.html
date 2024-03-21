@@ -98,7 +98,8 @@
                                 <th>Hours Worked</th>
                                 <th>Hourly Pay</th>
                                 <th>Total Pay</th>
-                                <th>Give Raise (enter %)</th>
+                                {/*Can't get Give Raise to work properly. Will revisit later.*/}
+                                {/*<th>Give Raise (enter %)</th>*/}
                                 <th>Fire</th>
                             </tr>
                         </thead>
@@ -109,16 +110,17 @@
                                     <td>{employee.fName}</td>
                                     <td>{employee.lName}</td>
                                     <td>{employee.dob}</td>
-                                    <td>{employee.hrsWorked ?? 'N/A'}</td>
-                                    <td>{(employee.hourlyWage ?? 0).toFixed(2)}</td>
-                                    <td>{((employee.hrsWorked ?? 0) * (employee.hourlyWage ?? 0)).toFixed(2)}</td>
-                                    <td>
+                                    <td>{Number(employee.hrsWorked) ? employee.hrsWorked.toString() : 'N/A'}</td>
+                                    <td>${Number(employee.hourlyWage).toFixed(2)}</td>
+                                    <td>${(Number(employee.hrsWorked) * Number(employee.hourlyWage)).toFixed(2)}</td>
+                                    {/*Can't get Give Raise to work properly. Will revisit later.*/}
+                                    {/*<td>
                                         <input type="number" id={`raise-${employee.id}`} />
                                         <button className="btn btn-dark" onClick={() => {
                                             const raiseInput = document.getElementById(`raise-${employee.id}`);
                                             handleRaise(employee.id, parseFloat(raiseInput.value));
                                         }}>Ok</button>
-                                    </td>
+                                    </td>*/}
                                     <td><button className="btn btn-danger" onClick={() => onFireEmployee(employee.id)}>Fire</button></td>
                                 </tr>
                             ))}
@@ -171,7 +173,8 @@
                 const updatedEmployees = employees.map(employee => {
                     if (employee.id === employeeId) {
                         const raiseFactor = 1 + (raisePercentage / 100);
-                        return { ...employee, hourlyWage: employee.hourlyWage * raiseFactor };
+                        const newHourlyWage = Number(employee.hourlyWage) * raiseFactor;
+                        return { ...employee, hourlyWage: newHourlyWage };
                     }
                     return employee;
                 });
